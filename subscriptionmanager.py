@@ -37,6 +37,7 @@ class SubscriptionManager:
     def __init__(self, logger):
         self.logger = logger
         self.cert_uuid = None
+        self.owner = None
 
         self.config = rhsm_config.initConfig(rhsm_config.DEFAULT_CONFIG_PATH)
         self.readConfig()
@@ -120,6 +121,11 @@ class SubscriptionManager:
             except Exception, e:
                 raise SubscriptionManagerError("Unable to open certificate %s (%s):" % (self.cert_file, str(e)))
         return self.cert_uuid
+
+    def getOwner(self):
+        if not self.owner:
+            self.owner = self.connection.getConsumer(self.uuid())['owner']['key']
+        return self.owner
 
     def getFacts(self):
         """ Get fact for current consumer. """
